@@ -23,6 +23,20 @@ export class WorkspaceService {
 
   static async create(name: string, user: any) {
     try {
+      const workspace = await prisma.workspace.findFirst({
+        where: {
+          name,
+          users: {
+            some: {
+              name: user.name,
+            },
+          },
+        },
+      });
+      if (workspace) {
+        throw new Error("Workspace already exists");
+      }
+
       await prisma.workspace.create({
         data: {
           name,
