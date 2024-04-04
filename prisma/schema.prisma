@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  name      String      @id @unique
+  password  String
+  workspace Workspace[]
+}
+
+model Workspace {
+  name  String @id @unique
+  users User[]
+  board Task[]
+}
+
+model Task {
+  id      Int       @id @default(autoincrement())
+  title   String
+  status  String
+  board   Workspace @relation(fields: [boardId], references: [name])
+  boardId String
+}
