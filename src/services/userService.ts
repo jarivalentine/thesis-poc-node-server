@@ -7,6 +7,15 @@ const prisma = new PrismaClient();
 export class UserService {
   static async register(name: string, password: string) {
     try {
+      const user = await prisma.user.findFirst({
+        where: {
+          name,
+        },
+      });
+      if (user) {
+        throw new Error("User already exists");
+      }
+
       const hashedPassword: string = await hash(password, 10);
       await prisma.user.create({
         data: {
