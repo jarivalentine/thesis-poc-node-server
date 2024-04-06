@@ -21,16 +21,35 @@ export class WorkspaceService {
     }
   }
 
+  static async get(name: string, user: any) {
+    try {
+      const workspace = await prisma.workspace.findFirst({
+        where: {
+          name,
+        },
+        include: {
+          users: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      });
+      if (!workspace) {
+        throw new Error("Workspace not found");
+      }
+
+      return workspace;
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  }
+
   static async create(name: string, user: any) {
     try {
       const workspace = await prisma.workspace.findFirst({
         where: {
           name,
-          users: {
-            some: {
-              name: user.name,
-            },
-          },
         },
       });
       if (workspace) {
@@ -50,7 +69,7 @@ export class WorkspaceService {
     }
   }
 
-  static async invite(name: string, userName: string, user: any) {
+  static async invite(name: string, username: string, user: any) {
     try {
       const workspace = await prisma.workspace.findFirst({
         where: {
@@ -67,13 +86,23 @@ export class WorkspaceService {
         throw new Error("Workspace not found");
       }
 
+      const invitedUser = await prisma.user.findFirst({
+        where: {
+          name: username,
+        },
+      });
+      console.log(invitedUser);
+      if (!invitedUser) {
+        throw new Error("User not found");
+      }
+
       await prisma.workspace.update({
         where: {
           name,
         },
         data: {
           users: {
-            connect: { name: userName },
+            connect: { name: username },
           },
         },
       });

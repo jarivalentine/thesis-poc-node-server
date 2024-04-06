@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { generateToken } from "../authMiddleware";
+import { generateToken } from "../middleware/authMiddleware";
 import { hash, compare } from "bcrypt";
 
 const prisma = new PrismaClient();
