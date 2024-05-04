@@ -38,13 +38,18 @@ export class WorkspaceController {
     }
   }
 
-  static async invite(req: AuthenticatedRequest, res: Response) {
+  static async invite(
+    req: AuthenticatedRequest,
+    res: Response,
+    eventEmitter: any
+  ) {
     const { name } = req.params;
     const { username } = req.body;
     const user = req.user;
 
     try {
       await WorkspaceService.invite(name, username, user);
+      eventEmitter.emit(`invite:${username}`, { workspace: name });
       res.status(200).send();
     } catch (error: any) {
       res.status(400).json({ error: error.message });

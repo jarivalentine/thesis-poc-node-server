@@ -91,7 +91,7 @@ export class WorkspaceService {
           name: username,
         },
       });
-      console.log(invitedUser);
+
       if (!invitedUser) {
         throw new Error("User not found");
       }
