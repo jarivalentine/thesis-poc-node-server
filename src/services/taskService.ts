@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { publishNotification } from "./notificationService";
 
 const prisma = new PrismaClient();
 
@@ -16,6 +17,8 @@ export default class TaskService {
           },
         },
       });
+
+      await publishNotification(title, `workspace/${workspacename}/task`);
 
       return task;
     } catch (error: any) {
